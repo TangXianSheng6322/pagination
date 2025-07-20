@@ -1,0 +1,42 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import 'tailwindcss';
+
+@theme {
+  --color-purpleMain: #b3a1ff;
+  --color-greenMain: #a4f5a6;
+  --color-blackMain: #222222;
+  --color-grayMain: #eff1ee;
+  --color-greenSecondary: #d3dcd3;
+  --font-main: 'Roboto', 'sans-serif';
+  --breakpoint-xs: 22rem;
+  --breakpoint-pro: 26rem;
+}
+@utility flex-center {
+  @apply flex items-center justify-center;
+}
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    @apply bg-greenSecondary;
+  }
+  button {
+    @apply font-main cursor-pointer border-2 px-2 py-2;
+  }
+  h1 {
+    @apply font-main text-5xl text-slate-900;
+  }
+  h2 {
+    @apply font-main text-3xl text-slate-900;
+  }
+  h3 {
+    @apply font-main text-xl text-slate-900;
+  }
+  p {
+    @apply font-main pro:text-lg text-sm font-light text-slate-900 md:text-xl lg:text-2xl xl:text-xl;
+  }
+}
