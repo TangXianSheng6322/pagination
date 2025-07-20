@@ -1,1 +1,33 @@
-<p>user-list works!</p>
+<div class="h-fit w-full">
+  <table
+    class="table w-full table-fixed border-collapse border-2 border-slate-900"
+  >
+    <thead>
+      <tr>
+        <th class="border border-slate-900" *ngFor="let column of columns">
+          {{ column }}
+          <span *ngIf="isDescSorting(column)">↓</span>
+          <span *ngIf="isAscSorting(column)">↑ </span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td class="border border-slate-900 text-center">
+          <input type="checkbox" />
+        </td>
+        <td class="border border-slate-900 text-center">
+          {{ user.userId }}
+        </td>
+        <td class="border border-slate-900 pl-[2vh]">{{ user.picture }}</td>
+        <td class="border border-slate-900 pl-[2vh]">{{ user.username }}</td>
+        <td class="border border-slate-900 pl-[2vh]">{{ user.active }}</td>
+        <td class="border border-slate-900 pl-[2vh]">{{ user.vip }}</td>
+        <td class="border border-slate-900 pl-[2vh]">{{ user.email }}</td>
+        <td class="border border-slate-900 pl-[2vh] text-center">
+          <button>Block</button><button>Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
