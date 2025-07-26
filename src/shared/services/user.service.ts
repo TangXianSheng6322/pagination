@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 // @Injectable()
 // export class UserService {
 //   constructor(private httpClient: HttpClient) {}
-//   getUser(): Observable<UserInterface[]> {
+//   getUser(sorting: SortingInterface, searchValue:string): Observable<UserInterface[]> {
 //     const url = 'http://localhost:3001/users';
 //     return this.httpClient.get<UserInterface[]>(url);
 //   }

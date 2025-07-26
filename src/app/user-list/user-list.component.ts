@@ -4,15 +4,17 @@ import { userItem } from '../../shared/models/userItem';
 // import { UserService } from '../../shared/services/user.service';
 import { UserInterface } from './types/user.interface';
 import { SortingInterface } from './types/sorting.iterface';
+import { FormBuilder, FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-user-list',
-  imports: [NgFor, NgIf],
+  imports: [NgFor, NgIf, FormsModule],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
   // providers: [UserService],
 })
 export class UserListComponent implements OnInit {
+  searchValue: string = '';
   usersOnline: UserInterface[] = [];
   columns: string[] = [
     'Select',
@@ -24,6 +26,11 @@ export class UserListComponent implements OnInit {
     'E-mail',
     'Actions',
   ];
+  // constructor(
+  //   private userService: UserService,
+  //   private fb: FormBuilder,
+  // ) {}
+  // searchForm = this.fb.nonNullable.group({ searchValue: '' });
 
   sorting: SortingInterface = { column: 'ID', order: 'asc' };
   ngOnInit(): void {}
@@ -34,7 +41,7 @@ export class UserListComponent implements OnInit {
   // }
 
   // fetchData(): void{
-  //   this.userService.getUser(this.sorting).subscribe((usersOnline) => {
+  //   this.userService.getUser(this.sorting, this.searchValue).subscribe((usersOnline) => {
   //      this.usersOnline = usersOnline;};
 
   users: UserInterface[] = [
@@ -57,7 +64,10 @@ export class UserListComponent implements OnInit {
       blocked: false,
     },
   ];
-
+  // onSearchSubmit(): void {
+  //   this.searchValue = this.searchForm.value.searchValue ?? '';
+  //   this.fetchData();
+  // }
   isDescSorting(column: string): boolean {
     return this.sorting.column === column && this.sorting.order === 'desc';
   }
