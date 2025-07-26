@@ -42,4 +42,4 @@ testem.log
 Thumbs.db
 
 #etc
-/user_list/src/environments
+/environments
