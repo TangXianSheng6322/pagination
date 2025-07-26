@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { userItem } from '../../shared/models/userItem';
 // import { UserService } from '../../shared/services/user.service';
@@ -8,7 +8,7 @@ import { FormBuilder, FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-user-list',
-  imports: [NgFor, NgIf, FormsModule],
+  imports: [FormsModule],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
   // providers: [UserService],
