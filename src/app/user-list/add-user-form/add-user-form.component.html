@@ -1,0 +1,28 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <label>
+    Username:
+    <input formControlName="username" />
+  </label>
+  @if (
+    userForm.controls.username.invalid && userForm.controls.username.touched
+  ) {
+    <div>Username is required.</div>
+  }
+
+  <label>
+    Email:
+    <input formControlName="email" type="email" />
+  </label>
+  @if (userForm.controls.email.invalid && userForm.controls.email.touched) {
+    <div>Valid email is required.</div>
+  }
+
+  <label>
+    Picture URL:
+    <input formControlName="picture" type="url" />
+  </label>
+
+  <button type="submit" [disabled]="userForm.invalid || submitting">
+    Add User
+  </button>
+</form>

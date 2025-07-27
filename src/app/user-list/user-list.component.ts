@@ -1,21 +1,21 @@
-
-import { Component, OnInit } from '@angular/core';
-import { userItem } from '../../shared/models/userItem';
-// import { UserService } from '../../shared/services/user.service';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import { UserService } from '../../shared/services/user.service';
 import { UserInterface } from './types/user.interface';
-import { SortingInterface } from './types/sorting.iterface';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { UserFirebaseService } from '../../shared/services/userFirebase.service';
+import { AddUserFormComponent } from './add-user-form/add-user-form.component';
 
 @Component({
   selector: 'app-user-list',
-  imports: [FormsModule],
+  imports: [FormsModule, AddUserFormComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
-  // providers: [UserService],
+  providers: [UserService],
 })
 export class UserListComponent implements OnInit {
-  searchValue: string = '';
-  usersOnline: UserInterface[] = [];
+  userService = inject(UserService);
+  usersFirebaseService = inject(UserFirebaseService);
+
   columns: string[] = [
     'Select',
     'ID',
@@ -26,52 +26,59 @@ export class UserListComponent implements OnInit {
     'E-mail',
     'Actions',
   ];
-  // constructor(
-  //   private userService: UserService,
-  //   private fb: FormBuilder,
-  // ) {}
-  // searchForm = this.fb.nonNullable.group({ searchValue: '' });
-
-  sorting: SortingInterface = { column: 'ID', order: 'asc' };
-  ngOnInit(): void {}
-  // constructor(private userInterface: UserService) {}
-  // ngOnInit(): void {
-  // fetchData();
-  //   });
-  // }
-
-  // fetchData(): void{
-  //   this.userService.getUser(this.sorting, this.searchValue).subscribe((usersOnline) => {
-  //      this.usersOnline = usersOnline;};
-
-  users: UserInterface[] = [
-    {
-      userId: '1',
-      picture: 'hgggn',
-      username: 'Jiggly',
-      active: true,
-      vip: true,
-      email: 'jigly@gmail.com',
-      blocked: false,
-    },
-    {
-      userId: '2',
-      picture: 'jjii',
-      username: 'Alaska',
-      active: false,
-      vip: false,
-      email: 'alaska@gmail.com',
-      blocked: false,
-    },
-  ];
-  // onSearchSubmit(): void {
-  //   this.searchValue = this.searchForm.value.searchValue ?? '';
-  //   this.fetchData();
-  // }
-  isDescSorting(column: string): boolean {
-    return this.sorting.column === column && this.sorting.order === 'desc';
+  visibleUsers = computed(() => this.userService.usersSig());
+  //blocking and unblocking
+  toggleBlocked(user: UserInterface) {
+    if (!user.id) return;
+    const newBlocked = !user.blocked;
+    this.usersFirebaseService
+      .updateUserBlockedStatus(user.id, newBlocked)
+      .subscribe({
+        next: () => {
+          console.log(
+            `User ${user.username} is now ${newBlocked ? 'blocked' : 'unblocked'}`,
+          );
+        },
+        error: (err) => {
+          console.log('Error updating blocked status:', err);
+        },
+      });
   }
-  isAscSorting(column: string): boolean {
-    return this.sorting.column === column && this.sorting.order === 'asc';
+
+  //deleting user
+  deletionProcess = false;
+  selectedUser: UserInterface | null = null;
+
+  deleteUserPopUp(user: UserInterface) {
+    this.selectedUser = user;
+    this.deletionProcess = true;
+  }
+  cancelDelete() {
+    this.selectedUser = null;
+    this.deletionProcess = false;
+  }
+
+  deleteUser() {
+    if (!this.selectedUser?.id) return;
+    this.deletionProcess = false;
+    this.usersFirebaseService
+      .deleteUserFromDB(this.selectedUser?.id)
+      .subscribe({
+        next: () => {
+          console.log(
+            `User ${this.selectedUser?.username} with ID ${this.selectedUser?.id} was deleted from the servers.`,
+          );
+          this.cancelDelete();
+        },
+        error: (err) => {
+          console.log('Error deleting user:', err);
+        },
+      });
+  }
+
+  ngOnInit(): void {
+    this.usersFirebaseService.getUsers().subscribe((users) => {
+      this.userService.usersSig.set(users);
+    });
   }
 }
