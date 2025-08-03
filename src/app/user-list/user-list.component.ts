@@ -1,19 +1,22 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { UserService } from '../../shared/services/user.service';
-import { UserInterface } from './types/user.interface';
-import { FormsModule } from '@angular/forms';
 import { UserFirebaseService } from '../../shared/services/userFirebase.service';
+import { FormsModule } from '@angular/forms';
 import { AddUserFormComponent } from './add-user-form/add-user-form.component';
 import { forkJoin } from 'rxjs';
+import { faker } from '@faker-js/faker';
+import { UserInterface } from './types/user.interface';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-user-list',
-  imports: [FormsModule, AddUserFormComponent],
+  imports: [FormsModule, AddUserFormComponent, NgClass],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
   providers: [UserService],
 })
 export class UserListComponent implements OnInit {
+  // Services And Constants
   userService = inject(UserService);
   usersFirebaseService = inject(UserFirebaseService);
 
@@ -27,30 +30,46 @@ export class UserListComponent implements OnInit {
     'E-mail',
     'Actions',
   ];
+
   visibleUsers = computed(() => this.userService.usersSig());
 
-  //selecting users and selecting all users
-  selectedUsers: Set<string> = new Set();
+  // Selection Management
+  selectedUsers: Set<UserInterface> = new Set();
   selectAll: boolean = false;
 
-  toggleUserSelection(userId: string) {
-    if (this.selectedUsers.has(userId)) {
-      this.selectedUsers.delete(userId);
+  isUserSelected(user: UserInterface): boolean {
+    return Array.from(this.selectedUsers).some(
+      (selected) => selected.userId === user.userId,
+    );
+  }
+
+  toggleUserSelection(user: UserInterface) {
+    const alreadySelected = this.isUserSelected(user);
+    if (alreadySelected) {
+      this.selectedUsers.forEach((u) => {
+        if (u.userId === user.userId) {
+          this.selectedUsers.delete(u);
+        }
+      });
     } else {
-      this.selectedUsers.add(userId);
+      this.selectedUsers.add(user);
     }
   }
 
   toggleSelectAll(visibleUsers: UserInterface[]) {
     this.selectAll = !this.selectAll;
     if (this.selectAll) {
-      visibleUsers.forEach((user) => this.selectedUsers.add(user.userId));
+      visibleUsers.forEach((user) => {
+        if (!this.isUserSelected(user)) {
+          this.selectedUsers.add(user);
+        }
+      });
     } else {
       this.selectedUsers.clear();
     }
   }
 
-  //blocking and unblocking
+  // Blocking Methods
   toggleBlocked(user: UserInterface) {
     if (!user.id) return;
     const newBlocked = !user.blocked;
@@ -68,27 +87,28 @@ export class UserListComponent implements OnInit {
       });
   }
 
-  //bulk block/unblock
   blockInBulk(shouldBlock: boolean) {
-    const update = Array.from(this.selectedUsers).map((userId) => {
-      return this.usersFirebaseService.updateUserBlockedStatus(
-        userId,
-        shouldBlock,
-      );
-    });
+    const updates = Array.from(this.selectedUsers)
+      .filter((user) => user.id !== undefined)
+      .map((user) => {
+        return this.usersFirebaseService.updateUserBlockedStatus(
+          user.id!,
+          shouldBlock,
+        );
+      });
 
-    forkJoin(update).subscribe({
+    forkJoin(updates).subscribe({
       next: () => {
         console.log(`Users ${shouldBlock ? 'blocked' : 'unblocked'}`);
         this.selectedUsers.clear();
       },
       error: (err) => {
-        console.log('Error blocking users:', err);
+        console.error('Error updating block status:', err);
       },
     });
   }
 
-  //deleting user
+  // Single Deletion
   deletionProcess = false;
   selectedUser: UserInterface | null = null;
 
@@ -96,6 +116,7 @@ export class UserListComponent implements OnInit {
     this.selectedUser = user;
     this.deletionProcess = true;
   }
+
   cancelDelete() {
     this.selectedUser = null;
     this.deletionProcess = false;
@@ -119,9 +140,9 @@ export class UserListComponent implements OnInit {
       });
   }
 
-  //deleting in bulk
+  // Bulk Deletion
   deletionPopupVisible = false;
-  usersToDelete: string[] = [];
+  usersToDelete: UserInterface[] = [];
 
   openBulkDeletionPopup() {
     this.usersToDelete = Array.from(this.selectedUsers);
@@ -136,25 +157,62 @@ export class UserListComponent implements OnInit {
   }
 
   confirmBulkDelete() {
-    const deletions = this.usersToDelete.map((userId) => {
-      return this.usersFirebaseService.deleteUserFromDB(userId);
-    });
+    const deletions = this.usersToDelete
+      .filter((user) => user.id !== undefined)
+      .map((user) => {
+        return this.usersFirebaseService.deleteUserFromDB(user.id!);
+      });
 
     forkJoin(deletions).subscribe({
       next: () => {
-        (this.usersToDelete.forEach((user) => {
-          console.log(`User ${user} hsa been deleted`);
-        }),
-          this.selectedUsers.clear());
+        this.usersToDelete.forEach((user) => {
+          console.log(
+            `User ${user.username} (ID: ${user.userId}) has been deleted`,
+          );
+        });
+        this.selectedUsers.clear();
         this.closePopup();
       },
       error: (err) => {
-        console.log('Error deleting users', err);
+        console.log('Error deleting users:', err);
         this.closePopup();
       },
     });
   }
 
+  // Random User Generation
+  generateRandomUser() {
+    return {
+      picture: faker.image.avatar(),
+      username: faker.internet.username(),
+      email: faker.internet.email(),
+    };
+  }
+
+  addRandomUsers(count: number = 1) {
+    const addRequests = Array.from({ length: count }, () => {
+      const randomUser = this.generateRandomUser();
+      return this.usersFirebaseService.addUser(
+        randomUser.username,
+        randomUser.email,
+        randomUser.picture,
+      );
+    });
+
+    forkJoin(addRequests).subscribe({
+      next: () => {
+        console.log(`${count} users added`);
+        this.usersFirebaseService.getUsers().subscribe((users) => {
+          this.userService.usersSig.set(users);
+        });
+      },
+      error: (err) => {
+        console.error('Error adding users:', err);
+      },
+    });
+  }
+
+  // Hook
   ngOnInit(): void {
     this.usersFirebaseService.getUsers().subscribe((users) => {
       this.userService.usersSig.set(users);

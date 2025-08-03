@@ -16,14 +16,14 @@ export class UserFirebaseService {
   firestore = inject(Firestore);
   userCollection = collection(this.firestore, 'users');
 
-  //get add users
+  //Get Users
   getUsers(): Observable<UserInterface[]> {
     return collectionData(this.userCollection, {
       idField: 'id',
     }) as Observable<UserInterface[]>;
   }
 
-  //add user
+  //Add User
   addUser(
     username: string,
     email: string,
@@ -54,7 +54,7 @@ export class UserFirebaseService {
     );
   }
 
-  //block a user
+  //Block User
   updateUserBlockedStatus(
     userDocId: string,
     blocked: boolean,
@@ -63,7 +63,7 @@ export class UserFirebaseService {
     return from(updateDoc(userDocRef, { blocked }));
   }
 
-  //delete user
+  //Delete User
   deleteUserFromDB(userDocId: string): Observable<void> {
     const userDocRef = doc(this.userCollection, userDocId);
     return from(deleteDoc(userDocRef));
