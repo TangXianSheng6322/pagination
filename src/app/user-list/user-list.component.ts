@@ -4,6 +4,7 @@ import { UserInterface } from './types/user.interface';
 import { FormsModule } from '@angular/forms';
 import { UserFirebaseService } from '../../shared/services/userFirebase.service';
 import { AddUserFormComponent } from './add-user-form/add-user-form.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
@@ -27,6 +28,28 @@ export class UserListComponent implements OnInit {
     'Actions',
   ];
   visibleUsers = computed(() => this.userService.usersSig());
+
+  //selecting users and selecting all users
+  selectedUsers: Set<string> = new Set();
+  selectAll: boolean = false;
+
+  toggleUserSelection(userId: string) {
+    if (this.selectedUsers.has(userId)) {
+      this.selectedUsers.delete(userId);
+    } else {
+      this.selectedUsers.add(userId);
+    }
+  }
+
+  toggleSelectAll(visibleUsers: UserInterface[]) {
+    this.selectAll = !this.selectAll;
+    if (this.selectAll) {
+      visibleUsers.forEach((user) => this.selectedUsers.add(user.userId));
+    } else {
+      this.selectedUsers.clear();
+    }
+  }
+
   //blocking and unblocking
   toggleBlocked(user: UserInterface) {
     if (!user.id) return;
@@ -43,6 +66,26 @@ export class UserListComponent implements OnInit {
           console.log('Error updating blocked status:', err);
         },
       });
+  }
+
+  //bulk block/unblock
+  blockInBulk(shouldBlock: boolean) {
+    const update = Array.from(this.selectedUsers).map((userId) => {
+      return this.usersFirebaseService.updateUserBlockedStatus(
+        userId,
+        shouldBlock,
+      );
+    });
+
+    forkJoin(update).subscribe({
+      next: () => {
+        console.log(`Users ${shouldBlock ? 'blocked' : 'unblocked'}`);
+        this.selectedUsers.clear();
+      },
+      error: (err) => {
+        console.log('Error blocking users:', err);
+      },
+    });
   }
 
   //deleting user
@@ -74,6 +117,42 @@ export class UserListComponent implements OnInit {
           console.log('Error deleting user:', err);
         },
       });
+  }
+
+  //deleting in bulk
+  deletionPopupVisible = false;
+  usersToDelete: string[] = [];
+
+  openBulkDeletionPopup() {
+    this.usersToDelete = Array.from(this.selectedUsers);
+    if (this.usersToDelete.length > 0) {
+      this.deletionPopupVisible = true;
+    }
+  }
+
+  closePopup() {
+    this.deletionPopupVisible = false;
+    this.usersToDelete = [];
+  }
+
+  confirmBulkDelete() {
+    const deletions = this.usersToDelete.map((userId) => {
+      return this.usersFirebaseService.deleteUserFromDB(userId);
+    });
+
+    forkJoin(deletions).subscribe({
+      next: () => {
+        (this.usersToDelete.forEach((user) => {
+          console.log(`User ${user} hsa been deleted`);
+        }),
+          this.selectedUsers.clear());
+        this.closePopup();
+      },
+      error: (err) => {
+        console.log('Error deleting users', err);
+        this.closePopup();
+      },
+    });
   }
 
   ngOnInit(): void {
