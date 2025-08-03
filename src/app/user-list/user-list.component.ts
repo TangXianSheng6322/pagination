@@ -34,18 +34,27 @@ export class UserListComponent implements OnInit {
   visibleUsers = computed(() => {
     const users = this.userService.usersSig();
     const search = this.searchText().toLowerCase();
+    const asc = this.sortAscending();
 
-    if (!search) return users;
-
-    return users.filter(
-      (user) =>
-        user.username.toLowerCase().includes(search) ||
-        user.email.toLowerCase().includes(search),
-    );
+    return users
+      .filter(
+        (user) =>
+          user.username.toLowerCase().includes(search) ||
+          user.email.toLowerCase().includes(search),
+      )
+      .sort((a, b) => {
+        const idA = parseInt(a.userId, 10);
+        const idB = parseInt(b.userId, 10);
+        return asc ? idA - idB : idB - idA;
+      });
   });
 
-  //Search
+  //Search and Sorting
   searchText = signal('');
+  sortAscending = signal(true);
+  toggleSortDirection() {
+    this.sortAscending.set(!this.sortAscending());
+  }
 
   // Selection Management
   selectedUsers: Set<UserInterface> = new Set();

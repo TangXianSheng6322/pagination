@@ -46,6 +46,11 @@
         @for (column of columns; track column) {
           <th class="border border-slate-900">
             {{ column }}
+            @if (column === 'ID') {
+              <span class="cursor-pointer" (click)="toggleSortDirection()">
+                {{ sortAscending() ? '⬆️' : '⬇️' }}</span
+              >
+            }
           </th>
         }
       </tr>
