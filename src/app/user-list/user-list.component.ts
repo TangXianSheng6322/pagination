@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { UserService } from '../../shared/services/user.service';
 import { UserFirebaseService } from '../../shared/services/userFirebase.service';
 import { FormsModule } from '@angular/forms';
@@ -31,7 +31,21 @@ export class UserListComponent implements OnInit {
     'Actions',
   ];
 
-  visibleUsers = computed(() => this.userService.usersSig());
+  visibleUsers = computed(() => {
+    const users = this.userService.usersSig();
+    const search = this.searchText().toLowerCase();
+
+    if (!search) return users;
+
+    return users.filter(
+      (user) =>
+        user.username.toLowerCase().includes(search) ||
+        user.email.toLowerCase().includes(search),
+    );
+  });
+
+  //Search
+  searchText = signal('');
 
   // Selection Management
   selectedUsers: Set<UserInterface> = new Set();

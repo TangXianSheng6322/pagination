@@ -29,6 +29,13 @@
   >
     Add 1 Random User
   </button>
+  <input
+    type="text"
+    placeholder="Search by name or email"
+    class="mb-4 w-full rounded border px-3 py-2"
+    [value]="searchText()"
+    (input)="searchText.set($any($event.target).value)"
+  />
 </div>
 <div class="relative h-fit w-full">
   <table
