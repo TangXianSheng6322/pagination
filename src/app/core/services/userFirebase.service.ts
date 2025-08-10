@@ -8,7 +8,7 @@ import {
   updateDoc,
 } from '@angular/fire/firestore';
 import { from, map, Observable, switchMap, take } from 'rxjs';
-import { UserInterface } from '../../app/user-list/types/user.interface';
+import { UserInterface } from '../models/user.interface';
 import { addDoc } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })

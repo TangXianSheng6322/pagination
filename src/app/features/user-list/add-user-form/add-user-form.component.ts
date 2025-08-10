@@ -5,7 +5,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { UserFirebaseService } from '../../../shared/services/userFirebase.service';
+import { UserFirebaseService } from '../../../core/services/userFirebase.service';
 
 @Component({
   selector: 'app-add-user-form',

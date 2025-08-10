@@ -1,11 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { UserService } from '../../shared/services/user.service';
-import { UserFirebaseService } from '../../shared/services/userFirebase.service';
+import { UserService } from '../../core/services/user.service';
+import { UserFirebaseService } from '../../core/services/userFirebase.service';
 import { FormsModule } from '@angular/forms';
 import { AddUserFormComponent } from './add-user-form/add-user-form.component';
 import { forkJoin } from 'rxjs';
 import { faker } from '@faker-js/faker';
-import { UserInterface } from './types/user.interface';
+import { UserInterface } from '../../core/models/user.interface';
 import { NgClass } from '@angular/common';
 
 @Component({
