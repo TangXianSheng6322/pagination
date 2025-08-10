@@ -42,6 +42,20 @@ export class UserListComponent implements OnInit {
           user.username.toLowerCase().includes(search) ||
           user.email.toLowerCase().includes(search),
       )
+      .filter((user) => {
+        switch (this.statusFilter()) {
+          case 'vip':
+            return user.vip === true;
+          case 'active':
+            return user.active === true;
+          case 'blocked':
+            return user.blocked === true;
+          case 'inactive':
+            return user.active === false;
+          default:
+            return true;
+        }
+      })
       .sort((a, b) => {
         const idA = parseInt(a.userId, 10);
         const idB = parseInt(b.userId, 10);
@@ -55,6 +69,11 @@ export class UserListComponent implements OnInit {
   toggleSortDirection() {
     this.sortAscending.set(!this.sortAscending());
   }
+
+  //Filtering
+  statusFilter = signal<'all' | 'vip' | 'active' | 'blocked' | 'inactive'>(
+    'all',
+  );
 
   // Selection Management
   selectedUsers: Set<UserInterface> = new Set();
@@ -89,6 +108,18 @@ export class UserListComponent implements OnInit {
       });
     } else {
       this.selectedUsers.clear();
+    }
+  }
+
+  selectAllUsers() {
+    const allSelected = this.visibleUsers().every((user) =>
+      this.selectedUsers.has(user),
+    );
+
+    if (allSelected) {
+      this.visibleUsers().forEach((user) => this.selectedUsers.delete(user));
+    } else {
+      this.visibleUsers().forEach((user) => this.selectedUsers.add(user));
     }
   }
 
@@ -235,6 +266,38 @@ export class UserListComponent implements OnInit {
     });
   }
 
+  //Paginated Users
+  currentPage = signal(1);
+  usersPerPage = signal(10);
+
+  paginatedUsers = computed(() => {
+    const start = (this.currentPage() - 1) * this.usersPerPage();
+    const end = start + this.usersPerPage();
+    return this.visibleUsers().slice(start, end);
+  });
+
+  totalPages = computed(() =>
+    Math.ceil(this.visibleUsers().length / this.usersPerPage()),
+  );
+
+  //Navigation
+  nextPage() {
+    if (this.currentPage() < this.usersPerPage()) {
+      this.currentPage.set(this.currentPage() + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.set(this.currentPage() - 1);
+    }
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
   // Hook
   ngOnInit(): void {
     this.usersFirebaseService.getUsers().subscribe((users) => {

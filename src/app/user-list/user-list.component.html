@@ -1,5 +1,55 @@
 <app-add-user-form></app-add-user-form>
+<div class="mb-4 flex gap-2">
+  <button
+    (click)="statusFilter.set('all')"
+    [class.bg-blue-500]="statusFilter() === 'all'"
+    [class.text-white]="statusFilter() === 'all'"
+    class="btn"
+  >
+    All
+  </button>
+
+  <button
+    (click)="statusFilter.set('vip')"
+    [class.bg-blue-500]="statusFilter() === 'vip'"
+    [class.text-white]="statusFilter() === 'vip'"
+    class="btn"
+  >
+    VIP
+  </button>
+
+  <button
+    (click)="statusFilter.set('active')"
+    [class.bg-blue-500]="statusFilter() === 'active'"
+    [class.text-white]="statusFilter() === 'active'"
+    class="btn"
+  >
+    Active
+  </button>
+
+  <button
+    (click)="statusFilter.set('blocked')"
+    [class.bg-blue-500]="statusFilter() === 'blocked'"
+    [class.text-white]="statusFilter() === 'blocked'"
+    class="btn"
+  >
+    Blocked
+  </button>
+
+  <button
+    (click)="statusFilter.set('inactive')"
+    [class.bg-blue-500]="statusFilter() === 'inactive'"
+    [class.text-white]="statusFilter() === 'inactive'"
+    class="btn"
+  >
+    Inactive
+  </button>
+</div>
+
 <div class="my-4 flex gap-4">
+  <button (click)="selectAllUsers()" class="border bg-gray-200 px-2 py-1">
+    Select All
+  </button>
   <button
     class="rounded bg-red-600 px-4 py-2 text-white"
     (click)="openBulkDeletionPopup()"
@@ -56,7 +106,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (user of visibleUsers(); track user) {
+      @for (user of paginatedUsers(); track user) {
         <tr>
           <td class="border border-slate-900 text-center">
             <input
@@ -116,6 +166,33 @@
       }
     </tbody>
   </table>
+  <!-- Page controls -->
+  @if (visibleUsers().length > 0) {
+    <div class="mt-4 flex items-center justify-center gap-2">
+      <button (click)="prevPage()" [disabled]="currentPage() === 1">
+        Prev
+      </button>
+
+      @for (
+        page of [].constructor(totalPages());
+        track pageIndex;
+        let pageIndex = $index
+      ) {
+        <button
+          (click)="goToPage(pageIndex + 1)"
+          [class.bg-blue-500]="currentPage() === pageIndex + 1"
+          class="border px-2 py-1"
+        >
+          {{ pageIndex + 1 }}
+        </button>
+      }
+
+      <button (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+        Next
+      </button>
+    </div>
+  }
+
   @if (deletionProcess && selectedUser) {
     <div
       class="popup bg-opacity-10 fixed inset-0 z-50 flex items-center justify-center bg-black"
