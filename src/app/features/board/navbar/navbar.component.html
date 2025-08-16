@@ -1,0 +1,16 @@
+<nav class="bg-gray-800 p-4 text-white shadow-md">
+  @if (auth.currentUser(); as user) {
+    <div class="mx-auto flex max-w-7xl items-center justify-between">
+      <span class="text-lg font-semibold">
+        Welcome, <span class="text-purple-400">{{ user.email }}</span>
+      </span>
+
+      <button
+        (click)="logout()"
+        class="rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
+      >
+        Logout
+      </button>
+    </div>
+  }
+</nav>
