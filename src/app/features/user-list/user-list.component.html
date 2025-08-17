@@ -106,7 +106,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (user of paginatedUsers(); track user) {
+      @for (user of paginatedUsers(); track trackByUserId($index, user)) {
         <tr>
           <td class="border border-slate-900 text-center">
             <input
@@ -166,7 +166,7 @@
       }
     </tbody>
   </table>
-  <!-- Page controls -->
+
   @if (visibleUsers().length > 0) {
     <div class="mt-4 flex items-center justify-center gap-2">
       <button (click)="prevPage()" [disabled]="currentPage() === 1">

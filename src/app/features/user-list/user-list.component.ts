@@ -20,6 +20,10 @@ export class UserListComponent implements OnInit {
   userService = inject(UserService);
   usersFirebaseService = inject(UserFirebaseService);
 
+  trackByUserId(index: number, user: any) {
+    return user.userId;
+  }
+
   columns: string[] = [
     'Select',
     'ID',

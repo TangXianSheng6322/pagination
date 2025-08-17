@@ -1,2 +1,12 @@
-<app-navbar></app-navbar>
+<div class="space-y-8 p-6">
+  <app-navbar></app-navbar>
+
+  <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+    <app-user-stats-widget></app-user-stats-widget>
+  </div>
+
+  <div class="rounded-xl bg-white p-6 shadow">
+    <app-user-piechart-widget></app-user-piechart-widget>
+  </div>
+</div>
 <app-user-list></app-user-list>

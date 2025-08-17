@@ -1,7 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import {
   Auth,
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
   User,
@@ -54,10 +56,20 @@ export class AuthService {
     }
   }
 
+  waitForAuthState(): Promise<User | null> {
+    return new Promise((resolve) => {
+      const unsubscribe = this.auth.onAuthStateChanged((user) => {
+        unsubscribe();
+        resolve(user);
+      });
+    });
+  }
+
   constructor(
     private auth: Auth,
     private router: Router,
   ) {
+    setPersistence(this.auth, browserLocalPersistence);
     this.auth.onAuthStateChanged((user) => {
       this.currentUser.set(user);
       this.isLoggedIn.set(!!user);
