@@ -214,3 +214,37 @@
     </div>
   }
 </div>
+<!-- Pagination -->
+@if (visibleUsers().length > 0) {
+  <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+    <button
+      (click)="prevPage()"
+      [disabled]="currentPage() === 1"
+      class="rounded border bg-gray-200 px-3 py-1"
+    >
+      Prev
+    </button>
+
+    @for (
+      page of [].constructor(totalPages());
+      track pageIndex;
+      let pageIndex = $index
+    ) {
+      <button
+        (click)="goToPage(pageIndex + 1)"
+        [class.bg-blue-500]="currentPage() === pageIndex + 1"
+        class="rounded border px-3 py-1"
+      >
+        {{ pageIndex + 1 }}
+      </button>
+    }
+
+    <button
+      (click)="nextPage()"
+      [disabled]="currentPage() === totalPages()"
+      class="rounded border bg-gray-200 px-3 py-1"
+    >
+      Next
+    </button>
+  </div>
+}

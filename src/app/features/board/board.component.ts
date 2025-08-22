@@ -1,10 +1,14 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { UserListComponent } from '../user-list/user-list.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { UserPiechartWidgetComponent } from './widgets/user-piechart-widget/user-piechart-widget.component';
 import { UserStatsWidgetComponent } from './widgets/user-stats-widget/user-stats-widget.component';
 import { AddUserFormComponent } from '../user-list/add-user-form/add-user-form.component';
 import { UserInterface } from '../../core/models/user.interface';
+import { BulkDeleteUserPopupComponent } from '../user-list/bulk-delete-user-popup/bulk-delete-user-popup.component';
+import { DeleteUserPopupComponent } from '../user-list/delete-user-popup/delete-user-popup.component';
+import { forkJoin } from 'rxjs';
+import { UserFirebaseService } from '../../core/services/userFirebase.service';
 
 @Component({
   selector: 'app-board',
@@ -14,6 +18,8 @@ import { UserInterface } from '../../core/models/user.interface';
     UserPiechartWidgetComponent,
     UserStatsWidgetComponent,
     AddUserFormComponent,
+    BulkDeleteUserPopupComponent,
+    DeleteUserPopupComponent,
   ],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css',
@@ -29,32 +35,49 @@ export class BoardComponent {
     this.popupVisible = false;
   }
 
+  usersFirebaseService = inject(UserFirebaseService);
+
   singleUserToDelete = signal<UserInterface | null>(null);
   bulkUsersToDelete = signal<UserInterface[]>([]);
-
-  // Called from UserListComponent
-  handleSingleDelete(user: UserInterface) {
-    this.singleUserToDelete.set(user);
-  }
-
-  handleBulkDelete(users: UserInterface[]) {
-    this.bulkUsersToDelete.set(users);
-  }
 
   closeDeletePopup() {
     this.singleUserToDelete.set(null);
     this.bulkUsersToDelete.set([]);
   }
 
-  confirmSingleDelete() {
-    // Here you can call the service to delete the single user
-    console.log('Deleting single user', this.singleUserToDelete());
-    this.closeDeletePopup();
+  deleteSingleUser() {
+    const user = this.singleUserToDelete();
+    if (!user?.id) return;
+
+    this.usersFirebaseService.deleteUserFromDB(user.id).subscribe({
+      next: () => {
+        console.log('Deleted single user', user);
+        this.closeDeletePopup();
+      },
+      error: (err) => console.error(err),
+    });
   }
 
-  confirmBulkDelete() {
-    // Here you can call the service to delete all selected users
-    console.log('Deleting bulk users', this.bulkUsersToDelete());
-    this.closeDeletePopup();
+  deleteBulkUsers() {
+    const users = this.bulkUsersToDelete().filter((u) => u.id !== undefined);
+    const deletions = users.map((u) =>
+      this.usersFirebaseService.deleteUserFromDB(u.id!),
+    );
+
+    forkJoin(deletions).subscribe({
+      next: () => {
+        console.log('Deleted bulk users', users);
+        this.closeDeletePopup();
+      },
+      error: (err) => console.error(err),
+    });
+  }
+
+  handleSingleDelete(user: UserInterface) {
+    this.singleUserToDelete.set(user);
+  }
+
+  handleBulkDelete(users: UserInterface[]) {
+    this.bulkUsersToDelete.set(users);
   }
 }

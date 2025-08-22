@@ -1,0 +1,26 @@
+<div
+  class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black"
+>
+  <div class="w-96 rounded bg-white p-6 shadow-lg">
+    <h2 class="mb-4 text-xl font-bold">Delete User</h2>
+    <p>
+      Are you sure you want to delete user
+      <strong>{{ singleUserToDelete?.username }}</strong
+      >?
+    </p>
+    <div class="mt-4 flex justify-end gap-2">
+      <button
+        class="rounded bg-gray-300 px-4 py-2"
+        (click)="closeDeletePopup()"
+      >
+        Cancel
+      </button>
+      <button
+        class="rounded bg-red-600 px-4 py-2 text-white"
+        (click)="confirmSingleDelete()"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
