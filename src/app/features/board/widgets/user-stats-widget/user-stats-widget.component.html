@@ -1,16 +1,45 @@
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-  <div class="rounded-xl bg-purple-100 p-4 text-center shadow">
-    <p class="text-gray-600">Total Users</p>
-    <h2 class="text-2xl font-bold text-purple-700">{{ totalUsers }}</h2>
+  <!-- Total Users Card -->
+  <div
+    class="flex flex-col justify-between rounded-xl bg-purple-100 p-4 shadow transition hover:shadow-lg"
+  >
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="font-medium text-gray-600">Total Users</p>
+        <h2 class="text-2xl font-bold text-purple-700">{{ totalUsers }}</h2>
+      </div>
+    </div>
+    <!-- Decorative bar -->
+    <div class="mt-2 h-2 w-full rounded-full bg-purple-200">
+      <div class="h-2 w-full rounded-full bg-purple-700"></div>
+    </div>
   </div>
 
-  <div class="rounded-xl bg-green-100 p-4 text-center shadow">
-    <p class="text-gray-600">Active Users</p>
+  <!-- Active Users Card -->
+  <div
+    class="flex flex-col justify-between rounded-xl bg-green-100 p-4 shadow transition hover:shadow-lg"
+  >
+    <p class="font-medium text-gray-600">Active Users</p>
     <h2 class="text-2xl font-bold text-green-700">{{ activeUsers }}</h2>
+    <div class="mt-2 h-2 w-full rounded-full bg-green-300">
+      <div
+        class="h-2 rounded-full bg-green-700"
+        [style.width.%]="activeUsersPercent"
+      ></div>
+    </div>
   </div>
 
-  <div class="rounded-xl bg-yellow-100 p-4 text-center shadow">
-    <p class="text-gray-600">VIP Users</p>
+  <!-- VIP Users Card -->
+  <div
+    class="flex flex-col justify-between rounded-xl bg-yellow-100 p-4 shadow transition hover:shadow-lg"
+  >
+    <p class="font-medium text-gray-600">VIP Users</p>
     <h2 class="text-2xl font-bold text-yellow-700">{{ vipUsers }}</h2>
+    <div class="mt-2 h-2 w-full rounded-full bg-yellow-300">
+      <div
+        class="h-2 rounded-full bg-yellow-700"
+        [style.width.%]="vipUsersPercent"
+      ></div>
+    </div>
   </div>
 </div>

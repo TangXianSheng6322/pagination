@@ -1,8 +1,15 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+  signal,
+} from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { UserFirebaseService } from '../../core/services/userFirebase.service';
 import { FormsModule } from '@angular/forms';
-import { AddUserFormComponent } from './add-user-form/add-user-form.component';
 import { forkJoin } from 'rxjs';
 import { faker } from '@faker-js/faker';
 import { UserInterface } from '../../core/models/user.interface';
@@ -10,7 +17,7 @@ import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-user-list',
-  imports: [FormsModule, AddUserFormComponent, NgClass],
+  imports: [FormsModule, NgClass],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
   providers: [UserService],
@@ -23,17 +30,6 @@ export class UserListComponent implements OnInit {
   trackByUserId(index: number, user: any) {
     return user.userId;
   }
-
-  columns: string[] = [
-    'Select',
-    'ID',
-    'Picture',
-    'Username',
-    'Active',
-    'VIP',
-    'E-mail',
-    'Actions',
-  ];
 
   visibleUsers = computed(() => {
     const users = this.userService.usersSig();
@@ -66,6 +62,26 @@ export class UserListComponent implements OnInit {
         return asc ? idA - idB : idB - idA;
       });
   });
+
+  //Outputs
+  @Output() openSingleDeletePopup = new EventEmitter<UserInterface>();
+  @Output() openBulkDeletePopup = new EventEmitter<UserInterface[]>();
+  @Output() openPopup = new EventEmitter<void>();
+
+  deleteUserPopUp(user: UserInterface) {
+    this.openSingleDeletePopup.emit(user);
+  }
+
+  openBulkDeletionPopup() {
+    const usersToDelete = Array.from(this.selectedUsers);
+    if (usersToDelete.length > 0) {
+      this.openBulkDeletePopup.emit(usersToDelete);
+    }
+  }
+
+  triggerPopup() {
+    this.openPopup.emit();
+  }
 
   //Search and Sorting
   searchText = signal('');
@@ -170,10 +186,10 @@ export class UserListComponent implements OnInit {
   deletionProcess = false;
   selectedUser: UserInterface | null = null;
 
-  deleteUserPopUp(user: UserInterface) {
-    this.selectedUser = user;
-    this.deletionProcess = true;
-  }
+  // deleteUserPopUp(user: UserInterface) {
+  //   this.selectedUser = user;
+  //   this.deletionProcess = true;
+  // }
 
   cancelDelete() {
     this.selectedUser = null;
@@ -202,12 +218,12 @@ export class UserListComponent implements OnInit {
   deletionPopupVisible = false;
   usersToDelete: UserInterface[] = [];
 
-  openBulkDeletionPopup() {
-    this.usersToDelete = Array.from(this.selectedUsers);
-    if (this.usersToDelete.length > 0) {
-      this.deletionPopupVisible = true;
-    }
-  }
+  // openBulkDeletionPopup() {
+  //   this.usersToDelete = Array.from(this.selectedUsers);
+  //   if (this.usersToDelete.length > 0) {
+  //     this.deletionPopupVisible = true;
+  //   }
+  // }
 
   closePopup() {
     this.deletionPopupVisible = false;

@@ -1,53 +1,15 @@
-<app-add-user-form></app-add-user-form>
-<div class="mb-4 flex gap-2">
+<button
+  (click)="triggerPopup()"
+  class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+>
+  Add new user
+</button>
+<!-- Actions & Search -->
+<div class="mb-4 flex flex-wrap items-center gap-2">
   <button
-    (click)="statusFilter.set('all')"
-    [class.bg-blue-500]="statusFilter() === 'all'"
-    [class.text-white]="statusFilter() === 'all'"
-    class="btn"
+    (click)="selectAllUsers()"
+    class="rounded border bg-gray-200 px-3 py-1"
   >
-    All
-  </button>
-
-  <button
-    (click)="statusFilter.set('vip')"
-    [class.bg-blue-500]="statusFilter() === 'vip'"
-    [class.text-white]="statusFilter() === 'vip'"
-    class="btn"
-  >
-    VIP
-  </button>
-
-  <button
-    (click)="statusFilter.set('active')"
-    [class.bg-blue-500]="statusFilter() === 'active'"
-    [class.text-white]="statusFilter() === 'active'"
-    class="btn"
-  >
-    Active
-  </button>
-
-  <button
-    (click)="statusFilter.set('blocked')"
-    [class.bg-blue-500]="statusFilter() === 'blocked'"
-    [class.text-white]="statusFilter() === 'blocked'"
-    class="btn"
-  >
-    Blocked
-  </button>
-
-  <button
-    (click)="statusFilter.set('inactive')"
-    [class.bg-blue-500]="statusFilter() === 'inactive'"
-    [class.text-white]="statusFilter() === 'inactive'"
-    class="btn"
-  >
-    Inactive
-  </button>
-</div>
-
-<div class="my-4 flex gap-4">
-  <button (click)="selectAllUsers()" class="border bg-gray-200 px-2 py-1">
     Select All
   </button>
   <button
@@ -57,7 +19,6 @@
   >
     Delete Selected
   </button>
-
   <button
     class="rounded bg-yellow-500 px-4 py-2 text-white"
     (click)="blockInBulk(true)"
@@ -65,7 +26,6 @@
   >
     Block Selected
   </button>
-
   <button
     class="rounded bg-green-600 px-4 py-2 text-white"
     (click)="blockInBulk(false)"
@@ -82,177 +42,174 @@
   <input
     type="text"
     placeholder="Search by name or email"
-    class="mb-4 w-full rounded border px-3 py-2"
+    class="min-w-[200px] flex-1 rounded border px-3 py-2"
     [value]="searchText()"
     (input)="searchText.set($any($event.target).value)"
   />
 </div>
-<div class="relative h-fit w-full">
-  <table
-    class="table w-full table-fixed border-collapse border-2 border-slate-900"
-  >
-    <thead>
-      <tr>
-        @for (column of columns; track column) {
-          <th class="border border-slate-900">
-            {{ column }}
-            @if (column === 'ID') {
-              <span class="cursor-pointer" (click)="toggleSortDirection()">
-                {{ sortAscending() ? '⬆️' : '⬇️' }}</span
-              >
-            }
-          </th>
-        }
-      </tr>
-    </thead>
-    <tbody>
-      @for (user of paginatedUsers(); track trackByUserId($index, user)) {
-        <tr>
-          <td class="border border-slate-900 text-center">
-            <input
-              type="checkbox"
-              type="checkbox"
-              [checked]="isUserSelected(user)"
-              (change)="toggleUserSelection(user)"
-            />
-          </td>
-          <td class="border border-slate-900 text-center">
-            {{ user.userId }}
-          </td>
-          <td class="border border-slate-900 text-center">
-            <div class="flex-center flex h-16">
-              <div
-                class="h-12 w-12 overflow-hidden rounded-full border-4"
-                [ngClass]="{
-                  'border-green-500': user.active,
-                  'border-red-500': !user.active,
-                }"
-              >
-                <img
-                  src="{{ user.picture }}"
-                  alt="user avatar"
-                  class="h-full w-full object-cover"
-                />
-              </div>
-            </div>
-          </td>
-          <td class="border border-slate-900 pl-[2vh]">
-            <div class="flex h-full gap-2">
-              {{ user.username }}
-              @if (user.blocked === true) {
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                >
-                  <path
-                    d="M12 2C9.8 2 8 3.8 8 6v4H7c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V6c0-2.2-1.8-4-4-4zm-2 4c0-1.1.9-2 2-2s2 .9 2 2v4h-4V6zm2 10c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z"
-                  />
-                </svg>
-              }
-            </div>
-          </td>
-          <td class="border border-slate-900 pl-[2vh]">{{ user.active }}</td>
-          <td class="border border-slate-900 pl-[2vh]">{{ user.vip }}</td>
-          <td class="border border-slate-900">{{ user.email }}</td>
-          <td class="border border-slate-900 pl-[2vh] text-center">
-            <button (click)="toggleBlocked(user)">
-              {{ user.blocked ? 'Unblock' : 'Block' }}</button
-            ><button (click)="deleteUserPopUp(user)">Delete</button>
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
-
-  @if (visibleUsers().length > 0) {
-    <div class="mt-4 flex items-center justify-center gap-2">
-      <button (click)="prevPage()" [disabled]="currentPage() === 1">
-        Prev
-      </button>
-
-      @for (
-        page of [].constructor(totalPages());
-        track pageIndex;
-        let pageIndex = $index
-      ) {
-        <button
-          (click)="goToPage(pageIndex + 1)"
-          [class.bg-blue-500]="currentPage() === pageIndex + 1"
-          class="border px-2 py-1"
-        >
-          {{ pageIndex + 1 }}
-        </button>
-      }
-
-      <button (click)="nextPage()" [disabled]="currentPage() === totalPages()">
-        Next
-      </button>
-    </div>
-  }
-
-  @if (deletionProcess && selectedUser) {
-    <div
-      class="popup bg-opacity-10 fixed inset-0 z-50 flex items-center justify-center bg-black"
+<!-- Filters + Sorting (Above User Cards) -->
+<div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-2">
+    <button
+      (click)="statusFilter.set('all')"
+      [class.bg-blue-500]="statusFilter() === 'all'"
+      [class.text-white]="statusFilter() === 'all'"
+      class="btn rounded border px-3 py-1"
     >
-      <div
-        class="w-[90%] max-w-md rounded-xl bg-white p-6 text-center shadow-lg"
-      >
-        <div class="mb-4 text-lg font-semibold text-black">
-          Are you sure you want to delete
-          <strong>{{ selectedUser.username }}</strong
-          >?
-        </div>
-        <div class="mt-6 flex justify-center gap-4">
-          <button
-            class="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-            (click)="deleteUser()"
-          >
-            Delete
-          </button>
-          <button
-            class="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
-            (click)="cancelDelete()"
-          >
-            Cancel
-          </button>
+      All
+    </button>
+    <button
+      (click)="statusFilter.set('vip')"
+      [class.bg-blue-500]="statusFilter() === 'vip'"
+      [class.text-white]="statusFilter() === 'vip'"
+      class="btn rounded border px-3 py-1"
+    >
+      VIP
+    </button>
+    <button
+      (click)="statusFilter.set('active')"
+      [class.bg-blue-500]="statusFilter() === 'active'"
+      [class.text-white]="statusFilter() === 'active'"
+      class="btn rounded border px-3 py-1"
+    >
+      Active
+    </button>
+    <button
+      (click)="statusFilter.set('blocked')"
+      [class.bg-blue-500]="statusFilter() === 'blocked'"
+      [class.text-white]="statusFilter() === 'blocked'"
+      class="btn rounded border px-3 py-1"
+    >
+      Blocked
+    </button>
+    <button
+      (click)="statusFilter.set('inactive')"
+      [class.bg-blue-500]="statusFilter() === 'inactive'"
+      [class.text-white]="statusFilter() === 'inactive'"
+      class="btn rounded border px-3 py-1"
+    >
+      Inactive
+    </button>
+  </div>
+
+  <!-- Sorting Button -->
+  <button
+    (click)="toggleSortDirection()"
+    class="flex items-center gap-2 rounded border border-gray-400 bg-purple-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-purple-700"
+  >
+    Sorting:
+    <span class="flex items-center gap-1">
+      @if (sortAscending()) {
+        Ascending
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="inline-block h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+      } @else {
+        Descending
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="inline-block h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      }
+    </span>
+  </button>
+</div>
+<!-- User Cards -->
+<div class="flex flex-col gap-4">
+  @for (user of paginatedUsers(); track trackByUserId($index, user)) {
+    <div
+      class="flex flex-wrap items-center justify-between gap-4 rounded-lg border bg-white p-4 shadow-sm"
+    >
+      <!-- Checkbox -->
+      <input
+        type="checkbox"
+        [checked]="isUserSelected(user)"
+        (change)="toggleUserSelection(user)"
+        class="h-5 w-5"
+      />
+
+      <!-- ID -->
+      <div class="w-10 text-center font-mono">{{ user.userId }}</div>
+
+      <!-- Avatar -->
+      <div class="flex items-center justify-center">
+        <div
+          class="h-12 w-12 overflow-hidden rounded-full border-4"
+          [ngClass]="{
+            'border-green-500': user.active,
+            'border-red-500': !user.active,
+          }"
+        >
+          <img
+            src="{{ user.picture }}"
+            alt="avatar"
+            class="h-full w-full object-cover"
+          />
         </div>
       </div>
-    </div>
-  }
-  @if (deletionPopupVisible) {
-    <div
-      class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black"
-    >
-      <div class="w-[300px] rounded-lg bg-white p-6 text-center shadow-lg">
-        <h2 class="mb-2 text-lg font-semibold text-black">
-          Delete {{ usersToDelete.length }} user(s)?
-        </h2>
-        <ul
-          class="mb-4 max-h-40 overflow-y-auto text-left text-sm text-gray-700"
-        >
-          @for (user of usersToDelete; track user) {
-            <li>• {{ user.username }}</li>
-          }
-        </ul>
-        <p class="mb-6 text-sm text-gray-600">This action cannot be undone.</p>
 
-        <div class="flex justify-around">
-          <button
-            (click)="confirmBulkDelete()"
-            class="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+      <!-- Username + Blocked Icon -->
+      <div class="flex flex-1 items-center gap-2">
+        {{ user.username }}
+        @if (user.blocked) {
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            class="h-6 w-6 text-red-500"
           >
-            Delete
-          </button>
-          <button
-            (click)="closePopup()"
-            class="rounded bg-gray-300 px-4 py-2 text-black hover:bg-gray-400"
-          >
-            Cancel
-          </button>
-        </div>
+            <path
+              d="M12 2C9.8 2 8 3.8 8 6v4H7c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V6c0-2.2-1.8-4-4-4zm-2 4c0-1.1.9-2 2-2s2 .9 2 2v4h-4V6zm2 10c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z"
+            />
+          </svg>
+        }
+      </div>
+
+      <!-- Active / VIP / Email -->
+      <div class="w-20 text-center">
+        {{ user.active ? 'Active' : 'Inactive' }}
+      </div>
+      <div class="w-20 text-center">{{ user.vip ? 'Vip' : 'Non Vip' }}</div>
+      <div class="flex-1 break-words">
+        <span class="font-bold">Email address:</span> {{ user.email }}
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2">
+        <button
+          class="rounded border bg-gray-200 px-2 py-1"
+          (click)="toggleBlocked(user)"
+        >
+          {{ user.blocked ? 'Unblock' : 'Block' }}
+        </button>
+        <button
+          class="rounded border bg-red-600 px-2 py-1 text-white"
+          (click)="deleteUserPopUp(user)"
+        >
+          Delete
+        </button>
       </div>
     </div>
   }
