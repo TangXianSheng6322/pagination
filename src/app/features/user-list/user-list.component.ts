@@ -14,10 +14,11 @@ import { forkJoin } from 'rxjs';
 import { faker } from '@faker-js/faker';
 import { UserInterface } from '../../core/models/user.interface';
 import { NgClass } from '@angular/common';
+import { LockIconComponent } from './lock-icon/lock-icon.component';
 
 @Component({
   selector: 'app-user-list',
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule, NgClass, LockIconComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
   providers: [UserService],
@@ -323,5 +324,12 @@ export class UserListComponent implements OnInit {
     this.usersFirebaseService.getUsers().subscribe((users) => {
       this.userService.usersSig.set(users);
     });
+  }
+
+  //etc
+  colorChanger(u: UserInterface) {
+    if (u.active && u.blocked) return '2';
+    if (u.active && !u.blocked) return '1';
+    return;
   }
 }

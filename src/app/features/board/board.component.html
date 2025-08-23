@@ -1,11 +1,6 @@
 <div class="flex min-h-screen flex-col lg:flex-row">
   <!-- Sidebar for large screens -->
-  <div class="hidden bg-gray-800 lg:block lg:w-2/12">
-    <app-navbar></app-navbar>
-  </div>
-
-  <!-- Top navbar for small screens -->
-  <div class="w-full bg-gray-800 lg:hidden">
+  <div class="w-full bg-gray-800 lg:w-2/12">
     <app-navbar></app-navbar>
   </div>
 
@@ -26,7 +21,7 @@
 
     <!-- User list / table -->
     <div
-      class="rounded-xl bg-white p-4 shadow-lg transition-transform duration-200 hover:scale-[1.02] hover:shadow-xl sm:p-6"
+      class="rounded-xl bg-white p-5 pt-10 shadow-lg transition-transform duration-200 hover:scale-[1.02] hover:shadow-xl lg:p-10 lg:pt-15"
     >
       <app-user-list
         (openPopup)="openPopupHandler()"
