@@ -15,10 +15,11 @@ import { faker } from '@faker-js/faker';
 import { UserInterface } from '../../core/models/user.interface';
 import { NgClass } from '@angular/common';
 import { LockIconComponent } from './lock-icon/lock-icon.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 
 @Component({
   selector: 'app-user-list',
-  imports: [FormsModule, NgClass, LockIconComponent],
+  imports: [FormsModule, NgClass, LockIconComponent, ToolbarComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
   providers: [UserService],
@@ -98,6 +99,7 @@ export class UserListComponent implements OnInit {
 
   // Selection Management
   selectedUsers: Set<UserInterface> = new Set();
+
   selectAll: boolean = false;
 
   isUserSelected(user: UserInterface): boolean {
