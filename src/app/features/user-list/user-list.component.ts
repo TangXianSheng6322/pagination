@@ -303,6 +303,51 @@ export class UserListComponent implements OnInit {
     Math.ceil(this.visibleUsers().length / this.usersPerPage()),
   );
 
+  getPaginationRange(
+    totalPages: number,
+    currentPage: number,
+    maxVisible: number,
+  ): (number | '…')[] {
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const pages: (number | '…')[] = [];
+
+    // Always include first page
+    pages.push(1);
+
+    // Left ellipsis
+    if (currentPage > 3) {
+      pages.push('…');
+    }
+
+    // Pages around current
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    // Right ellipsis
+    if (currentPage < totalPages - 2) {
+      pages.push('…');
+    }
+
+    // Always include last page
+    pages.push(totalPages);
+
+    return pages;
+  }
+
+  maxVisiblePages(): number {
+    const width = window.innerWidth;
+    if (width < 360) return 3;
+    if (width < 640) return 5;
+    return 10;
+  }
+
   //Navigation
   nextPage() {
     if (this.currentPage() < this.usersPerPage()) {

@@ -1,12 +1,12 @@
 <div
-  class="mb-10 flex flex-col gap-5 md:flex-row-reverse md:justify-between md:gap-20"
+  class="mb-5 flex flex-col gap-5 md:flex-row-reverse md:justify-between md:gap-20"
 >
   <!-- Search -->
   <div class="flex-grow lg:pl-30 xl:pl-70 2xl:pl-100">
     <input
       type="text"
       placeholder="Search by name or email"
-      class="w-full rounded border px-3 py-2"
+      class="w-full rounded border px-3 py-2 shadow-md"
       [value]="searchTextValue"
       (input)="searchTextChange.emit($any($event.target).value)"
     />
@@ -17,7 +17,7 @@
     <div class="buttons flex gap-1 md:gap-3">
       <button
         (click)="selectAllUsers.emit()"
-        class="rounded-2xl border bg-gray-200 md:px-3 md:py-1"
+        class="rounded-2xl border bg-gray-200 shadow-md md:px-3 md:py-1"
       >
         <span class="text-xs font-semibold md:text-base md:font-medium"
           >Select All</span
@@ -27,7 +27,7 @@
       <button
         (click)="openBulkDeletionPopup.emit()"
         [disabled]="selectedUsers.size === 0"
-        class="rounded-2xl bg-red-600 text-white disabled:opacity-50 md:px-4 md:py-2"
+        class="rounded-2xl bg-red-600 text-white shadow-lg disabled:opacity-50 md:px-4 md:py-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@
       <button
         (click)="blockInBulk.emit(true)"
         [disabled]="selectedUsers.size === 0"
-        class="rounded-2xl bg-yellow-500 text-white disabled:opacity-50 md:px-4 md:py-2"
+        class="rounded-2xl bg-yellow-500 text-white shadow-md disabled:opacity-50 md:px-4 md:py-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -69,7 +69,7 @@
       <button
         (click)="blockInBulk.emit(false)"
         [disabled]="selectedUsers.size === 0"
-        class="rounded-2xl bg-green-600 text-white disabled:opacity-50 md:px-4 md:py-2"
+        class="rounded-2xl bg-green-600 text-white shadow-md disabled:opacity-50 md:px-4 md:py-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -91,7 +91,7 @@
     <div>
       <button
         (click)="toggleSortDirection.emit()"
-        class="flex items-center gap-2 rounded-2xl border bg-gray-600 px-4 py-2 font-semibold text-white shadow hover:bg-gray-700 md:hidden"
+        class="flex items-center gap-2 rounded-2xl border bg-gray-600 px-4 py-2 font-semibold text-white shadow-md hover:bg-gray-700 md:hidden"
       >
         <span class="">
           @if (sortAscendingValue) {
@@ -139,7 +139,7 @@
         [ngClass]="
           statusFilterValue === 'all' ? 'bg-blue-500 text-white' : 'bg-white'
         "
-        class="rounded border border-black px-2 py-0.5 text-sm sm:px-3 sm:py-1 sm:text-base"
+        class="rounded border border-black px-2 py-0.5 text-sm shadow-lg sm:px-3 sm:py-1 sm:text-base"
       >
         All
       </button>
@@ -148,7 +148,7 @@
         [ngClass]="
           statusFilterValue === 'vip' ? 'bg-blue-500 text-white' : 'bg-white'
         "
-        class="rounded border border-black px-2 py-0.5 text-sm sm:px-3 sm:py-1 sm:text-base"
+        class="rounded border border-black px-2 py-0.5 text-sm shadow-md sm:px-3 sm:py-1 sm:text-base"
       >
         VIP
       </button>
@@ -157,7 +157,7 @@
         [ngClass]="
           statusFilterValue === 'active' ? 'bg-blue-500 text-white' : 'bg-white'
         "
-        class="rounded border border-black px-2 py-0.5 text-sm sm:px-3 sm:py-1 sm:text-base"
+        class="rounded border border-black px-2 py-0.5 text-sm shadow-md sm:px-3 sm:py-1 sm:text-base"
       >
         Active
       </button>
@@ -168,7 +168,7 @@
             ? 'bg-blue-500 text-white'
             : 'bg-white'
         "
-        class="rounded border border-black px-2 py-0.5 text-sm sm:px-3 sm:py-1 sm:text-base"
+        class="rounded border border-black px-2 py-0.5 text-sm shadow-md sm:px-3 sm:py-1 sm:text-base"
       >
         Blocked
       </button>
@@ -179,17 +179,17 @@
             ? 'bg-blue-500 text-white'
             : 'bg-white'
         "
-        class="rounded border border-black px-2 py-0.5 text-sm sm:px-3 sm:py-1 sm:text-base"
+        class="rounded border border-black px-2 py-0.5 text-sm shadow-md sm:px-3 sm:py-1 sm:text-base"
       >
         Inactive
       </button>
     </div>
   </div>
 
-  <div class="py-2">
+  <div class="">
     <button
       (click)="toggleSortDirection.emit()"
-      class="hidden items-center gap-2 rounded-2xl border bg-gray-600 px-4 py-2 font-semibold text-white shadow hover:bg-gray-700 md:flex"
+      class="hidden items-center gap-2 rounded-2xl border bg-gray-600 px-4 py-2 font-semibold text-white shadow-md hover:bg-gray-700 md:flex"
     >
       <span class="hidden text-base font-medium md:block"
         >Sorting: {{ sortAscendingValue ? 'Ascending' : 'Descending' }}</span

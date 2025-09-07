@@ -1,15 +1,13 @@
 <div class="rounded-xl bg-white p-6">
   <!-- Heading -->
-  <h3 class="mb-2 text-xl font-bold text-purple-600 md:text-2xl">
+  <h3 class="text-purpleMain mb-2 text-lg font-bold sm:text-xl md:text-2xl">
     User Distribution
   </h3>
-  <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
-    Breakdown of users by category
-  </p>
+  <p class="mb-4 text-sm text-gray-500">Breakdown of users by category</p>
 
   <!-- Chart Container -->
   <div class="relative flex justify-center">
-    <div class="aspect-square w-full max-w-xs sm:max-w-sm">
+    <div class="mx-auto aspect-square w-full max-w-[280px] sm:max-w-sm">
       <canvas
         baseChart
         [data]="pieChartData"
@@ -23,7 +21,7 @@
 
   <!-- Custom Legend -->
   <div
-    class="mt-6 grid grid-cols-2 gap-4 text-sm text-gray-700 sm:grid-cols-4 dark:text-gray-300"
+    class="mt-6 grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-700 sm:grid-cols-4"
   >
     @for (item of chartLegend; track item.label) {
       <div class="flex items-center space-x-2">
