@@ -1,9 +1,9 @@
 <div class="flex min-h-screen flex-col xl:flex-row">
   <!-- Sidebar for large screens -->
   <div class="w-full bg-gray-800 xl:w-2/12">
-    <app-navbar></app-navbar>
+    <app-navbar (toggleMenuEvent)="toggleMenu()"></app-navbar>
   </div>
-
+  <app-menu [open]="menuOpen" (closeMenu)="toggleMenu()"></app-menu>
   <!-- Main content -->
   <div class="flex-1 space-y-6 p-4 sm:p-6">
     <!-- Widgets + Pie chart row -->

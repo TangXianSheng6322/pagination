@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
-import { User } from '@angular/fire/auth';
+import { MenuComponent } from './menu/menu.component';
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +11,8 @@ import { User } from '@angular/fire/auth';
 export class NavbarComponent {
   constructor(public auth: AuthService) {}
 
-  logout() {
-    this.auth.logout();
+  @Output() toggleMenuEvent = new EventEmitter<void>();
+  toggleMenu() {
+    this.toggleMenuEvent.emit();
   }
 }

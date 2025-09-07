@@ -1,15 +1,44 @@
-<nav class="flex h-full flex-col justify-between p-6 text-white">
+<nav class="z-50 flex h-full justify-between p-6 text-white">
   @if (auth.currentUser(); as user) {
-    <div class="flex flex-col space-y-6">
+    <div
+      class="flex w-full items-center justify-between space-y-6 xl:flex-col xl:justify-start xl:gap-10"
+    >
       <span class="text-lg font-semibold">
         Welcome, <span class="text-purple-400">{{ user.email }}</span>
       </span>
 
       <button
-        (click)="logout()"
-        class="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+        class="rounded-2xl xl:hidden"
+        (click)="toggleMenu(); $event.stopPropagation()"
       >
-        Logout
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6 md:hidden"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 9h16.5m-16.5 6.75h16.5"
+          />
+        </svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="hidden size-6 md:block"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m19.5 8.25-7.5 7.5-7.5-7.5"
+          />
+        </svg>
       </button>
     </div>
   }

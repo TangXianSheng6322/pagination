@@ -9,6 +9,8 @@ import { BulkDeleteUserPopupComponent } from '../user-list/bulk-delete-user-popu
 import { DeleteUserPopupComponent } from '../user-list/delete-user-popup/delete-user-popup.component';
 import { forkJoin } from 'rxjs';
 import { UserFirebaseService } from '../../core/services/userFirebase.service';
+import { MenuComponent } from './navbar/menu/menu.component';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-board',
@@ -20,6 +22,7 @@ import { UserFirebaseService } from '../../core/services/userFirebase.service';
     AddUserFormComponent,
     BulkDeleteUserPopupComponent,
     DeleteUserPopupComponent,
+    MenuComponent,
   ],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css',
@@ -79,5 +82,12 @@ export class BoardComponent {
 
   handleBulkDelete(users: UserInterface[]) {
     this.bulkUsersToDelete.set(users);
+  }
+
+  //menu
+  menuOpen: boolean = false;
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 }
