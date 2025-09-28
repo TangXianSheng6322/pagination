@@ -1,9 +1,11 @@
-<nav class="z-50 flex h-full justify-between p-6 text-white">
+<nav
+  class="z-50 flex h-full justify-between p-6 text-white xl:flex-col xl:justify-start xl:gap-10"
+>
   @if (auth.currentUser(); as user) {
     <div
       class="flex w-full items-center justify-between space-y-6 xl:flex-col xl:justify-start xl:gap-10"
     >
-      <span class="text-lg font-semibold">
+      <span class="text-lg font-semibold xl:text-3xl">
         Welcome, <span class="text-purple-400">{{ user.email }}</span>
       </span>
 
@@ -42,4 +44,22 @@
       </button>
     </div>
   }
+  <div class="hidden w-full flex-col gap-5 bg-pink-400 xl:flex">
+    <button
+      (click)="toggleMenu(); $event.stopPropagation()"
+      class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+    >
+      Settings
+    </button>
+
+    <button class="w-full rounded-lg bg-gray-200 px-4 py-2 hover:bg-gray-300">
+      Dark Mode
+    </button>
+    <button
+      (click)="logout()"
+      class="w-full rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+    >
+      Logout
+    </button>
+  </div>
 </nav>

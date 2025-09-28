@@ -15,4 +15,7 @@ export class NavbarComponent {
   toggleMenu() {
     this.toggleMenuEvent.emit();
   }
+  logout() {
+    this.auth.logout();
+  }
 }
